@@ -1015,14 +1015,14 @@ function updateLoopUI() {
       break;
     case 'active':
       btnLoop.classList.add('active');
-      loopHint.textContent = fmt(loopStart) + ' → ' + fmt(loopEnd) + '  ·  druk om te pauzeren';
+      loopHint.textContent = fmt(loopStart) + ' → ' + fmt(loopEnd) + '  ·  tik = pauzeren  ·  lang indrukken = wissen';
       loopHint.className = 'loop-hint active';
       loopRegionEl.style.left  = (loopStart / duration * 100) + '%';
       loopRegionEl.style.width = ((loopEnd - loopStart) / duration * 100) + '%';
       loopRegionEl.style.display = 'block';
       break;
     case 'inactive':
-      loopHint.textContent = fmt(loopStart) + ' → ' + fmt(loopEnd) + '  ·  druk om te herstarten';
+      loopHint.textContent = fmt(loopStart) + ' → ' + fmt(loopEnd) + '  ·  tik = reloop  ·  lang indrukken = wissen';
       loopHint.className = 'loop-hint';
       loopRegionEl.style.left  = (loopStart / duration * 100) + '%';
       loopRegionEl.style.width = ((loopEnd - loopStart) / duration * 100) + '%';
@@ -1032,7 +1032,22 @@ function updateLoopUI() {
 }
 
 // CDJ-patroon state machine
+// Lang indrukken loop-knop = loop clearen
+let loopPressTimer = null;
+let loopLongPressed = false;
+btnLoop.addEventListener('pointerdown', () => {
+  loopLongPressed = false;
+  loopPressTimer = setTimeout(() => {
+    loopLongPressed = true;
+    loopState = 'idle'; loopStart = null; loopEnd = null;
+    updateLoopUI();
+  }, 700);
+});
+btnLoop.addEventListener('pointerup',     () => clearTimeout(loopPressTimer));
+btnLoop.addEventListener('pointercancel', () => clearTimeout(loopPressTimer));
+
 btnLoop.addEventListener('click', () => {
+  if (loopLongPressed) return;  // long press al afgehandeld
   if (!audioBuffer) return;
   switch(loopState) {
     case 'idle':
