@@ -86,7 +86,7 @@
 </header>
 <div class="main">
   <div class="drop-zone" id="dropZone">
-    <input type="file" id="fileInput" accept="audio/*">
+    <input type="file" id="fileInput" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.flac,.mp4">
     <div class="drop-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19V6l12-3v13M9 19c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm12 0c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z"/></svg>
     </div>
@@ -102,7 +102,7 @@
         <div class="track-title" id="trackTitle">—</div>
         <div class="track-sub" id="trackDur">—</div>
       </div>
-      <button class="change-btn">ander bestand<input type="file" id="fileInput2" accept="audio/*"></button>
+      <button class="change-btn">ander bestand<input type="file" id="fileInput2" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.flac,.mp4"></button>
     </div>
 
     <div class="loading-bar" id="loadingBar"></div>
@@ -1272,7 +1272,10 @@ btnPlay.addEventListener('pointerup',     () => clearTimeout(pressTimer));
 btnPlay.addEventListener('pointercancel', () => clearTimeout(pressTimer));
 
 async function loadFile(file) {
-  if (!file || !file.type.startsWith('audio')) { setStatus('Geen geldig audiobestand.', true); return; }
+  const audioExts = /\.(mp3|m4a|aac|wav|ogg|flac|mp4|aiff|wma)$/i;
+  if (!file || (!file.type.startsWith('audio') && !file.type.startsWith('video/mp4') && !audioExts.test(file.name))) {
+    setStatus('Geen geldig audiobestand.', true); return;
+  }
   stopAudio(false);
   loopState = 'idle'; loopStart = null; loopEnd = null; doneTill = 0;
   updateLoopUI();
